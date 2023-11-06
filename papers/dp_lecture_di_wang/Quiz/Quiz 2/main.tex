@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage{amsmath,amsfonts,amssymb,graphicx,mathtools,flexisym}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\topmargin -.5in
+\textheight 9in
+\oddsidemargin -.25in
+\evensidemargin -.25in
+\textwidth 7in
+
+\begin{document}
+
+% ========== Edit your name here
+\author{Name and KAUST ID}
+\title{Quiz 2}
+\maketitle
+
+\medskip
+
+% ========== Begin answering questions here
+\begin{enumerate}
+
+\item Consider the following statements. Judge whether each of them is true or false. You don’t need to explain the reason.
+\begin{itemize}
+
+\item For $(\epsilon, \delta)$-DP algorithms, the privacy budget $\delta$ must satisfy $\delta\ll \frac{1}{n}$. Equivalently, there is an $(\epsilon=0, \delta)$-DP algorithm such that if $\delta\gg \frac{1}{n}$ then with high probability its output will reveal individuals information. 
+\item Consider the following the statement:
+
+For a mechanism $A: \mathcal{X}^n \mapsto \mathcal{Y}$, a pair of neighboring data $D\sim D'$, defines the sets 
+\begin{equation}
+    \text{Good}=\{y\in \mathcal{Y}: \frac{\mathbb{P}(A(D)=y) }{\mathbb{P}(A(D')=y }\leq e^\epsilon\}, \text{Bad}= \mathcal{Y}-  \text{Good}. 
+\end{equation}
+Then $A$ is $(\epsilon, \delta)$-DP if and only if $\mathbb{P}(A(D)\in  \text{Bad})\leq \delta$ for every pair of neighboring datasets. Note that is $A(D)$ and $A(D')$ are continuous distributions then we just replace the probability to the probability density functions. 
+\item For a given privacy budget $\epsilon$, the error of Laplacian mechanism to achieve $\epsilon$-DP is always smaller than the error of Gaussian mechanism to achieve $(\epsilon, \delta=\frac{1}{n})$-DP.
+\item We know that Differential privacy has the subsampling property. However, different subsampling approaches may lead different level of privacy guarantees. 
+\item Like the approximate (or $(\epsilon, \delta)$) DP, R\'{e}nyi-DP also has a similar form the advanced composition theorem. 
+\end{itemize}
+
+\end{enumerate}
+ 
+% ========== Continue adding items as needed
+
+
+
+\end{document}
+\grid
+\grid

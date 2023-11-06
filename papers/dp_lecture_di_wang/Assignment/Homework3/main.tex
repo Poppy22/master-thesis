@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{amssymb}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\newdate{date}{02}{11}{2022}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\date{\displaydate{date}}
+\topmargin -.5in
+\textheight 9in
+\oddsidemargin -.25in
+\evensidemargin -.25in
+\textwidth 7in
+
+\begin{document}
+
+% ========== Edit your name here
+\author{Deadline: 19th November, 2021}
+\title{Homework 3}
+\maketitle
+\medskip
+% ========== Begin answering questions here
+\begin{enumerate}
+
+\item (2pts) In Lecture 5 and 6 we introduced the privacy loss as a random variable $L_{D, D'}=\ell_{D, D'}(Y)$ where $Y\sim A(D)$ and $\ell_{D, D'}=\ln(\frac{p_{A(D)}(y)}{p_{A(D')}(y)})$. What is the privacy loss  when $A$ is the Laplace mechanism in one
+dimension? To make things concrete: assume $f(D)=0$ and $f(D')=1$ and we add noise $\text{Lap}(\frac{1}{\epsilon}).$
+
+\item (2pts) {\bf Composing the Gaussian mechanism:} Consider a version of the Lemma 6.5 that is specific to the Gaussian mechanism: show
+that for every function $f: \mathcal{X}^n \mapsto \mathbb{R}$ with global sensitivity $\Delta$, for every pair of neighboring
+datasets $D, D'$, there is a randomized algorithm $F$ with the form $F(z)=az+b+\mathcal{N}(0, \rho^2)$ for some $a, b, \rho$ such that 
+\begin{itemize}
+	\item If $U\sim \mathcal{N}({0, \sigma^2})$ then $F(U)\sim A(D)$ and 
+	\item If $V\sim \mathcal{N}({\Delta, \sigma^2})$ then $F(V) \sim A(D')$,  
+\end{itemize}
+where $A(D)=f(D)+Z$ where $Z\sim \mathcal{N}(0, \sigma^2)$.  
+
+\item (2pts) Use Problem 2 and the idea of the proof of Lemma 6.7  to show that the adaptive composition of $k$ executions of the Gaussian mechanism with $\Delta$-sensitivity queries satisfies $(\epsilon, \delta)$-DP for $\sigma=\frac{\Delta\sqrt{k}\sqrt{2\ln 1/\delta }}{\epsilon}.$  
+\item (2pts) Proof Theorem 9.3 in Lecture 9
+\item (3pts) Consider the following Algorithm \ref{alg:1} and prove the following statements 
+	\begin{algorithm}[!htbp]
+    \caption{Generalized Random Response} 
+    \label{alg:1}
+    \begin{algorithmic}[1]
+        \State {\bf Input} Dataset $D=\{x_1,\cdots, x_n\}$ where $x_i$ is an $m$-bit string in $\{-\frac{1}{\sqrt{m}}, \frac{1}{\sqrt{m}}\}^m \cup \{0\}$, privacy parameter $\epsilon$.    
+        \For{$i=1, \cdots, n$}
+        \State Sample $j\in \{1, 2 ,\cdots, m\}$ uniformly at random
+        \If {$x_i\neq 0$}
+        \State Randomize $j$-th bit of $x_i$, i.e., $x_{i,j}$ as following:
+        \begin{equation*}
+        	z_{i,j}=        \begin{cases} c_\epsilon m x_{i,j} \text{ w.p. } \frac{e^\epsilon}{e^\epsilon+1} \\
+        	-c_\epsilon m x_{i,j} \text{ w.p. } \frac{1}{e^\epsilon+1},
+        	
+        \end{cases} 
+        \end{equation*}
+        where $c_\epsilon=\frac{e^\epsilon+1}{\epsilon-1}$. 
+        \Else 
+        \State Generate a uniform bit $z_{i, j}\in \{-c_\epsilon \sqrt{m}, c_\epsilon \sqrt{m}\}.$
+        \EndIf
+        \State Return $z_i=(0, 0, \cdots, z_{i, j}, 0, \cdots, 0)$, where $z_{i, j}$ is the $j$-th position of $z$.  
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+1) The algorithm is $\epsilon$-LDP. 2) For each $x_i\in \{-\frac{1}{\sqrt{m}}, \frac{1}{\sqrt{m}}\}^m \cup \{0\}$, $\mathbb{E}(z_i)=x_i$. 
+\item (3pts) \textbf{Optimal Gaussian Mechanism:} In the lecture 5, we provided several Gaussian mechanisms (such as Theorem 5.7, Theorem 5.9 and Theorem 5.18). Try to compare these three mechanisms. You can use simple query such as the mean or the average. You can go through the reference [1] in Lecture 5, and you can use the source code of the optimal Gaussian mechanism 
+
+ {https://github.com/BorjaBalle/analytic-gaussian-mechanism}
+ 
+
+
+
+\end{enumerate}
+
+\end{document}
+\grid
+\grid

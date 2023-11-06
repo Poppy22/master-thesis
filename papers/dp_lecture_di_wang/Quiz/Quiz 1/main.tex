@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage{amsmath,amsfonts,amssymb,graphicx,mathtools,flexisym}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\topmargin -.5in
+\textheight 9in
+\oddsidemargin -.25in
+\evensidemargin -.25in
+\textwidth 7in
+
+\begin{document}
+
+% ========== Edit your name here
+\author{Name and KAUST ID}
+\title{Quiz 1}
+\maketitle
+
+\medskip
+
+% ========== Begin answering questions here
+\begin{enumerate}
+
+\item Consider the following statements. Judge whether each of them is true or false. You don’t need to explain the reason.
+
+\begin{itemize}
+	
+	\item 
+
+Consider the Generalized Random Response (Algorithm \ref{alg:1}). Each $Y_i$ is a unbiased estimator of $\phi(x_i)$. 
+
+	\begin{algorithm}[!htbp]
+    \caption{Generalized Random Response} 
+    \label{alg:1}
+    \begin{algorithmic}[1]
+        \Require Dataset $D=\{x_1,\cdots, x_n\}$, predicate $\phi: \mathcal{X}\mapsto \{0, 1\}$ and parameter $\epsilon>0$
+        \Ensure Bits $(Y_1, \cdots, Y_n)$
+        \For{$i=1, \cdots, n$}
+        \State Let $Y_i=\phi(x_i)$ w.p $\frac{e^\epsilon}{e^\epsilon+1}$ and $Y_i=1-\phi(x_i)$ otherwise. 
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+\item Consider the following definition: A randomized algorithm $M$ is is called $\epsilon$-differentially private (DP) if for all neighboring datasets $D, D'$ and every particular output $s$ in the output space (if the output space is discrete) we have $\mathbb{P}(A(D)=s)\leq e^\epsilon \mathbb{P}(A(D')=s)$.
+   
+   The previous definition is equivalent to the original definition of $\epsilon$-DP (if the output space is discrete). 
+\item In the definition of $\epsilon$-DP, in practice $\epsilon$ could be an extremely small number such as $1/2^{10}$. 
+\item The definition of the $\ell_1$-norm global sensitivity must be the maximum $\|f(D)-f(D')\|_1$ for all the pairs of neighboring datasets $D\sim D'$. 
+\item The exponential mechanism could be not well defined. For example, when the possible outputs is infinite. 
+\end{itemize}
+ 
+% ========== Continue adding items as needed
+
+\end{enumerate}
+
+\end{document}
+\grid
+\grid

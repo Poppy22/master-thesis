@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\newdate{date}{26}{12}{2022}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\date{\displaydate{date}}
+\topmargin -.5in
+\textheight 9in
+\oddsidemargin -.25in
+\evensidemargin -.25in
+\textwidth 7in
+
+\begin{document}
+
+% ========== Edit your name here
+\author{Deadline: 11th December, 2022}
+\title{Homework 4}
+\maketitle
+
+\medskip
+% ========== Begin answering questions here
+\begin{enumerate}
+
+
+\item (3pts) Proof Theorem 10.8 in Lecture 10. You can check reference [2] in the lecture. 
+\item (3.5 pts) Try to use the Opacus library to implement the DP-SGD algorithm for some deep learning tasks in PyTorch. You can find a tutorial at \url{https://opacus.ai/}. Write a report for your experimental setting and results. 
+\item (3.5 pts) Try to use the Tensorflow Privacy to implement the DP-SGD algorithm for some deep learning tasks in Tensorflow. You can find a tutorial at \url{https://www.tensorflow.org/responsible_ai/privacy/guide}. Write a report for your experimental setting and results. 
+
+\end{enumerate}
+
+\end{document}
+\grid
+\grid
