@@ -5,8 +5,6 @@ import time
 
 import crypten.mpc as mpc
 
-crypten.init()
-
 torch.set_num_threads(1)
 torch.set_printoptions(precision=16) # default
 
@@ -60,24 +58,16 @@ def get_min_indices(x, k, bits_to_cut):
 
 
 # ================== Implemented an updated distributed_noise_and_round from Damgard's paper ==================
-# Changes currently:
-# - no noise added
-# - rounding doesn't work, so no rounding when cutting bits and also no mod 2^a
-# - argmin instead of argmax (same thing computationally)
-# - return (n - k) argmin indices, instead of just one argmax index
-@mpc.run_multiprocess(world_size=3)
-def distributed_noise_and_round(nabla_input, noise_input, theta_prev_input, n, p, k=2, a=64, c=0, eta=0.1, t=0):
+@mpc.run_multiprocess(world_size=2)
+def distributed_noise_and_round(nabla_input, noise_output, theta_prev_input, n, p, k=2, a=64, c=0, eta=0.1, t=0):
     nabla = crypten.cryptensor(nabla_input, ptype=crypten.mpc.arithmetic)
     theta_prev = crypten.cryptensor(theta_prev_input, ptype=crypten.mpc.arithmetic)
-    noise = crypten.cryptensor(noise_input, ptype=crypten.mpc.arithmetic)
+    noise_output_shared = crypten.cryptensor(noise_output, ptype=crypten.mpc.arithmetic)
 
     # Local computation: add gradients
     nabla_sum = 0
     for i in range(n):
         nabla_sum += nabla[i]
-
-    # add noise
-    nabla_sum= nabla_sum + noise
 
     # Local computation: aggregate gradients
     nabla_prev = nabla_sum.div(n)
@@ -88,22 +78,33 @@ def distributed_noise_and_round(nabla_input, noise_input, theta_prev_input, n, p
     # Ring 2^a ==> TODO if it works, move inside get_min_indices
     # theta_trunc = mod_2a(theta_trunc, a)
 
-    start = time.time()
     min_indices = get_min_indices(theta_t, k, c)
 
-    return min_indices, theta_t.get_plain_text()
+    # make k-sparse
+    for i in min_indices:
+        zero = crypten.cryptensor(0, ptype=crypten.mpc.arithmetic)
+        theta_t[i] = zero
+
+    theta_t = theta_t + noise_output_shared
+
+    return theta_t.get_plain_text()
     
 
-# ================== Function for IHT in Di Wang's paper in mpc ==================
-# uses distributed_noise_and_round at every iteration
-# Changes:
-# - no bins, all user data used in every iteration
-# - no local randomization
-# - no L2 ball projection at the end
-def iht_mpc(data, noise, k, T_max, a=64, c=0, eta=0.1, eps=0.001):
+def generate_laplace_noise(lmb, ebs, dta, s, d, n_servers):
+    full_noise = np.zeros(d)
+    for i in range(n_servers):
+        s = max(s, 1) # to avoid generating zero noise when the sparsity is 0
+        scale = (lmb / ebs) * (2 * np.sqrt(3 * s * np.log(1 / dta)))
+        noise = np.random.laplace(0, scale, d)
+        full_noise += noise
+    return full_noise
+
+
+def solve(data, noise_params, k, T_max, a=64, c=0, eta=0.1, eps=0.001):
     x_input, y_input, theta_star = data # unpack data
     n = len(x_input)
     p = len(x_input[0])
+    lmb, ebs, dlt = noise_params
 
     theta_prev = torch.zeros(p)
     nabla = torch.zeros((n, p))
@@ -116,6 +117,10 @@ def iht_mpc(data, noise, k, T_max, a=64, c=0, eta=0.1, eps=0.001):
 
     iteration_error = [0]
     for t in range(T_max):
+        if t % 10 == 0:
+            print(t)
+
+        noise_output = torch.tensor(generate_laplace_noise(lmb, ebs / T_max, dlt / T_max, k, p, 1))
 
         nabla = torch.zeros((n, p))
         nabla = nabla.double()
@@ -127,12 +132,8 @@ def iht_mpc(data, noise, k, T_max, a=64, c=0, eta=0.1, eps=0.001):
             var2 = x_input[i].transpose(0, -1)
             nabla[i] = var2.mul(var1)
 
-        result = distributed_noise_and_round(nabla, noise, theta_prev, n, p, k, a, c, eta, t)
-        min_indices, theta_t = result[0] # just from the first party
-
-        if k > 0 and k < n:
-            for i in min_indices:
-                theta_t[i] = 0
+        result = distributed_noise_and_round(nabla, noise_output, theta_prev, n, p, k, a, c, eta, t)
+        theta_t = result[0] # just from the first party
 
         e = torch.norm(theta_t - theta_star, p=2)
         diff = abs(e - iteration_error[-1])
@@ -140,8 +141,8 @@ def iht_mpc(data, noise, k, T_max, a=64, c=0, eta=0.1, eps=0.001):
         iteration_error.append(e.item())
         theta_prev = theta_t
 
-        if diff <= eps:
-            break
+        # if diff <= eps:
+        #     break
 
     rel_error = iteration_error[-1] / torch.norm(theta_star, p=2)
     return iteration_error[1:], rel_error
