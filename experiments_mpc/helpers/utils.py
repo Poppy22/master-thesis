@@ -45,7 +45,7 @@ def plot_error_by_iteration_and_dict_key(d, title, xlabel, ylabel, line_label):
     increase_color = False
     for n in d.keys():
         T = len(d[n])
-        plt.plot(range(T), d[n], linewidth=3, label=f'{line_label}={n}')
+        plt.plot(range(T), d[n], linewidth=3, label=f'{line_label}={n}', linestyle=style[n[1]])
 
         if increase_color:
             i += 1

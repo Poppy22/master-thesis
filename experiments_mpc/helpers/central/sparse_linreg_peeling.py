@@ -43,7 +43,6 @@ def peeling(x, k, lmb, ebs, dlt, dp=True):
     # add noise to the final result
     if dp:
         noise = generate_laplace_noise(lmb, ebs, dlt, k, d)
-        print("NOISE ADDED AT THE END", noise)
         return x + noise
 
     return x
@@ -76,9 +75,7 @@ def solve(data, k, T, eta, noise_params):
 
         # peeling - make k-sparse
         if k > 0 and k < p:
-            print(f'theta_t at iteration {t} before peeling: {theta_t}')
             theta_t = peeling(theta_t, k, lmb, ebs, dlt, dp)
-            print(f'theta_t at iteration {t} after peeling: {theta_t}')
         elif dp:
             noise = generate_laplace_noise(lmb, ebs, dlt, k, p)
             theta_t = theta_t + noise
