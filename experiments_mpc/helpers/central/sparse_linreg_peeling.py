@@ -15,6 +15,7 @@ def generate_laplace_noise(lmb, ebs, dta, s, d):
     noise = np.random.laplace(0, scale, d)
     return noise
 
+
 def peeling(x, k, lmb, ebs, dlt, dp=True):
     # make a deep copy to keep the real x for the return
     x_copy = copy.deepcopy(x)
@@ -75,7 +76,7 @@ def solve(data, k, T, eta, noise_params):
 
         # peeling - make k-sparse
         if k > 0 and k < p:
-            theta_t = peeling(theta_t, k, lmb, ebs, dlt, dp)
+            theta_t = peeling(theta_t, k, lmb, ebs / T, dlt / T, dp)
         elif dp:
             noise = generate_laplace_noise(lmb, ebs, dlt, k, p)
             theta_t = theta_t + noise
