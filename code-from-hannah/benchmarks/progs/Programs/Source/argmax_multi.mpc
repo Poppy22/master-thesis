@@ -1,0 +1,40 @@
+import numpy as np
+import time
+import math
+
+program.use_edabit(True)
+
+n = 16
+log = 4
+
+D = sint.Array(n)
+D.input_from(0)
+
+bl = sint.Array(n)
+
+max = sint.Matrix(log+1,n)
+index = sint.Matrix(log+1,n)
+temp = sint.Matrix(log+1,n)
+for i in range(n):
+    index[0][i]=sint(i)
+max[0]=D
+
+
+for i in range(log):
+    num = int(n/(2**(i+1)))
+    memnum = MemValue(num)
+    ind = i
+    i = MemValue(i)
+
+    @for_range_opt_multithread(16,int(n/2))
+    def f(j):
+        @if_(j < memnum)
+        def _():
+            temp[i+1][j] = (max[i][2*j]>max[i][2*j+1]).if_else(sint(1),sint(0))
+            max[i+1][j] = (temp[i+1][j]==sint(1)).if_else(max[i][2*j],max[i][2*j+1])
+            index[i+1][j] = (temp[i+1][j]==sint(1)).if_else(index[i][2*j],index[i][2*j+1])
+
+
+
+print_ln('%s', D.reveal())
+print_ln('%s', index[-1].reveal())

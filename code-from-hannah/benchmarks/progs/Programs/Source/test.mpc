@@ -1,0 +1,8 @@
+a = Array(1, sint)
+a.input_from(0)
+
+b = Array(1, sint)
+b.input_from(1)
+
+a.write_to_file()
+b.write_to_file()

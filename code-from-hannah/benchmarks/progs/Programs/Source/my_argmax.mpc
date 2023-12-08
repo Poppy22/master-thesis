@@ -1,0 +1,68 @@
+import numpy as np
+import Compiler.mpc_math as mpc_math
+
+sfix.set_precision(16, 31) # default
+program.use_edabit(True)
+
+d = 5
+r = 1 # how many bits to cut - we can choose to cut zero bits => less efficient, but more accuracy
+
+# computing servers: 3 (A, B)
+# supporting server: C (party2, acts as a dealer for correlated randomness)
+# experiments: no noise from supporting parties
+A = sfix.Array(d)
+A.input_from(0)
+
+B = sfix.Array(d)
+B.input_from(1)
+
+# Line 3: pre-processing => this is already happening when I compile the program
+
+# Line 4: sample noise from a negative binomial distribution
+# noise generated in python with `s = np.random.negative_binomial(1/(k - t), p, d)`
+# Line 5: secret-share the noise => happening just because I declared it as secret int
+
+noise_A = sfix.Array(d)
+noise_A.input_from(0)
+
+noise_B = sfix.Array(d)
+noise_B.input_from(1)
+
+# Line 6: the computing servers add the noise and the input together
+D = sfix.Array(d)
+@for_range(d)
+def f(i):
+    D[i] = A[i] + B[i] + noise_A[i] + noise_B[i]
+
+print_ln('%s', D.reveal())
+
+# Line 7: Truncation (for efficiency); TODO: rounding? no need here?
+@for_range(d)
+def f(i):
+    D[i] = D[i] / (2 ** 3)
+
+print_ln('%s', D.reveal())
+
+# Line 8: Changing the computation domain Z -> Z_{2^a}
+@for_range(d)
+def f(i):
+    D[i] = D[i] % (2 ** 6) # note: modulo only works if the right-hand operator is a compile-time power of two (i.e. constant, i.e. not secret shared)
+
+# Line 9: compute ArgMax on vector D (which is secret shared among the computation servers)
+max = sint.Array(d + 1)
+index = sint.Array(d + 1)
+temp = sint.Array(d + 1)
+max[0] = sint(0) # dummy 0 index
+index[0] = sint(0) # dummy 0 index
+
+@for_range(d)
+def f(i):
+    temp[i] = (D[i] > max[i]).if_else(sint(1), sint(0))
+    max[i + 1] = (temp[i] == sint(1)).if_else(D[i], max[i])
+    index[i + 1] = (temp[i] == sint(1)).if_else(sint(i), index[i])
+
+# Line 10: open and get the plaintext value for the result of ArgMax
+
+print_ln('%s', D.reveal())
+print_ln('max %s', max[d].reveal())
+print_ln('argmax %s', index[d].reveal())

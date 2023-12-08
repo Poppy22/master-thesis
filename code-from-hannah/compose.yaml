@@ -1,0 +1,15 @@
+services:
+  my-ubuntu-1:
+    build: .
+    volumes:
+      - "./benchmarks/progs/Programs/Source:/benchmarks/progs/Programs/Source"
+
+  my-ubuntu-2:
+    build: .
+    volumes:
+      - "./benchmarks/progs/Programs/Source:/benchmarks/progs/Programs/Source"
+
+  my-ubuntu-3:
+    build: .
+    volumes:
+      - "./benchmarks/progs/Programs/Source:/benchmarks/progs/Programs/Source"

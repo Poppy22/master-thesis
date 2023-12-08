@@ -1,0 +1,28 @@
+import numpy as np
+import time
+import math
+
+program.use_edabit(True)
+
+n = 16
+
+D = sint.Array(n)
+D.input_from(0)
+
+bl = sint.Array(n)
+
+max = sint.Array(n+1)
+index = sint.Array(n+1)
+temp = sint.Array(n+1)
+max[0] = sint(0)
+index[0] = sint(0)
+
+@for_range(n)
+def f(i):
+    temp[i] = (D[i]>max[i]).if_else(sint(1),sint(0))
+    max[i+1] = (temp[i]==sint(1)).if_else(D[i],max[i])
+    index[i+1] = (temp[i]==sint(1)).if_else(sint(i),index[i])
+
+print_ln('%s', D.reveal())
+print_ln('%s', max.reveal())
+print_ln('%s', index.reveal())
